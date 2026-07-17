@@ -1,0 +1,45 @@
+name: CI
+
+# FIX (Alto #10): antes no existía ningún pipeline de CI. Combinado con
+# `typescript.ignoreBuildErrors: true` (ya corregido en next.config.mjs),
+# un PR con errores de tipos o un build roto podía mergearse sin que nadie
+# lo notara hasta que fallara en producción. Este workflow corre en cada
+# push/PR a main y bloquea el merge si falla cualquier paso.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Build
+        run: npm run build
+        env:
+          # Variables dummy solo para que `next build` no falle al leer
+          # process.env.* en tiempo de build. En un pipeline real, usa
+          # GitHub Secrets con las credenciales del proyecto de Supabase
+          # de staging/CI.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
