@@ -19,7 +19,7 @@ La app usa Supabase directamente desde:
 - **Server Components** (`app/dashboard/**/page.tsx`) para lecturas paginadas/filtradas, usando `lib/supabase/server.ts`.
 - **Client Components** (`'use client'`) para mutaciones desde formularios, usando `lib/supabase/client.ts`.
 
-No hay una API REST propia (salvo `/auth/callback`): toda la autorización real vive en **políticas RLS de Postgres** (ver `/supabase/migrations`) combinadas con guards de rol en el servidor (`lib/auth/require-role.ts`). Esto es intencional y es el patrón recomendado por Supabase, pero significa que **las migraciones SQL de este repo deben aplicarse en tu proyecto de Supabase** para que la app sea segura — ver más abajo.
+No hay una API REST propia (salvo `/auth/callback`): toda la autorización real vive en **políticas RLS de Postgres** (ver `/supabase/migrations`) combinadas con guards de rol en el servidor (`lib/auth/require-role.ts`). 
 
 ## Primeros pasos
 
